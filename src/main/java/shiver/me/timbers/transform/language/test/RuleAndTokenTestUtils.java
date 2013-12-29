@@ -35,30 +35,7 @@ public final class RuleAndTokenTestUtils {
 
         final List<Class<TokenTransformation>> transformationTypes = listTransformationsInPackage(packageName);
 
-        try {
-
-            testEachTransformation(transformationTypes);
-
-        } catch (InvocationTargetException e) {
-
-            throw new RuntimeException(e);
-
-        } catch (NoSuchMethodException e) {
-
-            throw new RuntimeException(e);
-
-        } catch (InstantiationException e) {
-
-            throw new RuntimeException(e);
-
-        } catch (IllegalAccessException e) {
-
-            throw new RuntimeException(e);
-
-        } catch (NoSuchFieldException e) {
-
-            throw new RuntimeException(e);
-        }
+        testEachTransformation(transformationTypes);
     }
 
     @SuppressWarnings("unchecked")
@@ -80,9 +57,7 @@ public final class RuleAndTokenTestUtils {
         return Collections.unmodifiableList(typeTransformationsClasses);
     }
 
-    public static void testEachTransformation(List<Class<TokenTransformation>> transformationTypes)
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException,
-            NoSuchFieldException {
+    public static void testEachTransformation(List<Class<TokenTransformation>> transformationTypes) {
 
         for (Class<TokenTransformation> type : transformationTypes) {
 
@@ -108,19 +83,47 @@ public final class RuleAndTokenTestUtils {
         return mockApplier;
     }
 
-    private static TokenTransformation newTransformation(Class<TokenTransformation> type, TokenApplier applier)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private static TokenTransformation newTransformation(Class<TokenTransformation> type, TokenApplier applier) {
 
-        final Constructor<TokenTransformation> constructor = type.getConstructor(TokenApplier.class);
+        final Constructor<TokenTransformation> constructor;
+        try {
 
-        return constructor.newInstance(applier);
+            constructor = type.getConstructor(TokenApplier.class);
+
+            return constructor.newInstance(applier);
+
+        } catch (NoSuchMethodException e) {
+
+            throw new RuntimeException(e);
+
+        } catch (InvocationTargetException e) {
+
+            throw new RuntimeException(e);
+
+        } catch (InstantiationException e) {
+
+            throw new RuntimeException(e);
+
+        } catch (IllegalAccessException e) {
+
+            throw new RuntimeException(e);
+        }
     }
 
-    private static String staticName(Transformation transformation) throws NoSuchFieldException,
-            IllegalAccessException {
+    private static String staticName(Transformation transformation) {
 
-        final Field staticName = transformation.getClass().getField("NAME");
+        try {
+            final Field staticName = transformation.getClass().getField("NAME");
 
-        return staticName.get(null).toString();
+            return staticName.get(null).toString();
+
+        } catch (NoSuchFieldException e) {
+
+            throw new RuntimeException(e);
+
+        } catch (IllegalAccessException e) {
+
+            throw new RuntimeException(e);
+        }
     }
 }
