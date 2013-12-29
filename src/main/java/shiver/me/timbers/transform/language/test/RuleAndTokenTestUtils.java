@@ -2,19 +2,13 @@ package shiver.me.timbers.transform.language.test;
 
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
-import org.reflections.Reflections;
 import shiver.me.timbers.transform.Transformation;
 import shiver.me.timbers.transform.antlr4.CompositeTokenTransformation;
 import shiver.me.timbers.transform.antlr4.TokenApplier;
 import shiver.me.timbers.transform.antlr4.TokenTransformation;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -23,6 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static shiver.me.timbers.transform.language.test.TransformationsUtils.*;
 
 public final class RuleAndTokenTestUtils {
 
@@ -31,46 +26,58 @@ public final class RuleAndTokenTestUtils {
 
     private static final String APPLIER_STRING = "test apply string.";
 
+    private static final Field APPLIER_FIELD = getTokenApplierField();
+
+    private static Field getTokenApplierField() {
+
+        try {
+
+            final Field applierField = CompositeTokenTransformation.class.getDeclaredField("applier");
+            applierField.setAccessible(true);
+
+            return applierField;
+
+        } catch (NoSuchFieldException e) {
+
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void testEachTransformationInPackage(String packageName) {
 
         final List<Class<TokenTransformation>> transformationTypes = listTransformationsInPackage(packageName);
 
-        testEachTransformation(transformationTypes);
+        final List<TokenTransformation> transformations = buildTransformations(transformationTypes,
+                new TokenApplierBuilder() {
+
+                    @Override
+                    public TokenApplier build(Class<TokenTransformation> type) {
+
+                        return buildMockApplier();
+                    }
+                });
+
+        testEachTransformation(transformations);
     }
 
-    @SuppressWarnings("unchecked")
-    private static List<Class<TokenTransformation>> listTransformationsInPackage(String packageName) {
+    private static void testEachTransformation(List<TokenTransformation> transformations) {
 
-        final Reflections reflections = new Reflections(packageName);
-
-        final Set<Class<? extends CompositeTokenTransformation>> allTypeTransformationClasses =
-                reflections.getSubTypesOf(CompositeTokenTransformation.class);
-
-        final List<Class<TokenTransformation>> typeTransformationsClasses =
-                new ArrayList<Class<TokenTransformation>>(allTypeTransformationClasses.size());
-
-        for (Class type : allTypeTransformationClasses) {
-
-            typeTransformationsClasses.add((Class<TokenTransformation>) type);
-        }
-
-        return Collections.unmodifiableList(typeTransformationsClasses);
-    }
-
-    public static void testEachTransformation(List<Class<TokenTransformation>> transformationTypes) {
-
-        for (Class<TokenTransformation> type : transformationTypes) {
-
-            TokenApplier mockApplier = buildMockApplier();
-
-            TokenTransformation transformation = newTransformation(type, mockApplier);
+        for (TokenTransformation transformation : transformations) {
 
             assertEquals(staticName(transformation), transformation.getName());
 
             assertEquals(APPLIER_STRING, transformation.apply(mock(RuleContext.class), mock(Token.class),
                     APPLIER_STRING));
 
-            verify(mockApplier, times(1)).apply(any(RuleContext.class), any(Token.class), eq(APPLIER_STRING));
+            try {
+
+                verify((TokenApplier) APPLIER_FIELD.get(transformation), times(1))
+                        .apply(any(RuleContext.class), any(Token.class), eq(APPLIER_STRING));
+
+            } catch (IllegalAccessException e) {
+
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -81,33 +88,6 @@ public final class RuleAndTokenTestUtils {
                 .thenReturn(APPLIER_STRING);
 
         return mockApplier;
-    }
-
-    private static TokenTransformation newTransformation(Class<TokenTransformation> type, TokenApplier applier) {
-
-        final Constructor<TokenTransformation> constructor;
-        try {
-
-            constructor = type.getConstructor(TokenApplier.class);
-
-            return constructor.newInstance(applier);
-
-        } catch (NoSuchMethodException e) {
-
-            throw new RuntimeException(e);
-
-        } catch (InvocationTargetException e) {
-
-            throw new RuntimeException(e);
-
-        } catch (InstantiationException e) {
-
-            throw new RuntimeException(e);
-
-        } catch (IllegalAccessException e) {
-
-            throw new RuntimeException(e);
-        }
     }
 
     private static String staticName(Transformation transformation) {
