@@ -17,7 +17,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static shiver.me.timbers.transform.language.test.TransformationsUtils.*;
+import static shiver.me.timbers.transform.language.test.TransformationsUtils.buildTransformations;
+import static shiver.me.timbers.transform.language.test.TransformationsUtils.listTransformationsInPackage;
 
 public final class RuleAndTokenTestUtils {
 

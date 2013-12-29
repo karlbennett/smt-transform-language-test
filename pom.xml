@@ -16,7 +16,9 @@
 
     <name>${project.artifactId}</name>
 
-    <description>This library contains common code to help with testing the language specific smt-transform implementations.</description>
+    <description>This library contains common code to help with testing the language specific smt-transform
+        implementations.
+    </description>
 
     <url>http://karlbennett.github.io/${project.artifactId}/</url>
 
