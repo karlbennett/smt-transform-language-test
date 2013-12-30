@@ -14,9 +14,9 @@ public final class ParserBuilderTestUtils {
     private ParserBuilderTestUtils() {
     }
 
-    public static final String SOURCE = "";
+    private static final String SOURCE = "";
 
-    public static final Transformations<TokenTransformation> TRANSFORMATIONS =
+    private static final Transformations<TokenTransformation> TRANSFORMATIONS =
             new IndividualTransformations<TokenTransformation>(NULL_TOKEN_TRANSFORMATION);
 
     public static <P extends Recognizer> void buildParserTest(ParserBuilder<P> parserBuilder) {
