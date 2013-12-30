@@ -22,7 +22,7 @@ public final class TransformationsUtils {
     private TransformationsUtils() {
     }
 
-    public static <T extends CompositeTokenTransformation> List<T> buildWrappingTransformationsFromPackageName(
+    public static <T extends TokenTransformation> List<T> buildWrappingTransformationsFromPackageName(
             String packageName) {
 
         final List<Class<T>> tokenTransformationClasses = listTransformationsInPackage(packageName);
@@ -31,7 +31,7 @@ public final class TransformationsUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends CompositeTokenTransformation> List<Class<T>> listTransformationsInPackage(
+    public static <T extends TokenTransformation> List<Class<T>> listTransformationsInPackage(
             String packageName) {
 
         final Reflections reflections = new Reflections(packageName);
@@ -50,13 +50,13 @@ public final class TransformationsUtils {
         return Collections.unmodifiableList(typeTransformationsClasses);
     }
 
-    public static <T extends CompositeTokenTransformation> List<T> buildWrappingTransformations(
+    public static <T extends TokenTransformation> List<T> buildWrappingTransformations(
             Collection<Class<T>> classes) {
 
         return buildTransformations(classes, new NameTokenApplierBuilder<T>());
     }
 
-    public static <T extends CompositeTokenTransformation> List<T> buildTransformations(Collection<Class<T>> classes,
+    public static <T extends TokenTransformation> List<T> buildTransformations(Collection<Class<T>> classes,
                                                                                         TokenApplierBuilder<T> tokenApplierBuilder) {
 
         List<T> transformations = new ArrayList<T>(classes.size());
