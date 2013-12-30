@@ -51,7 +51,7 @@ public class FileUtilsTest {
         assertEquals("the test text should be read correctly.", TEST_TEXT, text);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = RuntimeException.class)
     public void testReadTestFileToStringWithInvalidFile() {
 
         readTestFileToString(getClass(), "this is also not a valid file name");

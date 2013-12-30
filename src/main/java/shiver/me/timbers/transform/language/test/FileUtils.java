@@ -35,7 +35,7 @@ public class FileUtils {
 
             if (isNull(stream)) {
 
-                throw new IllegalStateException("no input stream was able to be created for a file with the name \"" +
+                throw new IOException("no input stream was able to be created for a file with the name \"" +
                         fileName + "\" in the package \"" + anchor.getPackage().getName() + "\"");
             }
 
