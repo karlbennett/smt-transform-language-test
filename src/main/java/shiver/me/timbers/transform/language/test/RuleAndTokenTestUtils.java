@@ -22,7 +22,7 @@ import static shiver.me.timbers.transform.language.test.TransformationsUtils.lis
 
 /**
  * This class contains methods that help with automatically testing all the different
- * {@link CompositeTokenTransformation} implementations. 
+ * {@link CompositeTokenTransformation} implementations.
  */
 public final class RuleAndTokenTestUtils {
 
@@ -53,6 +53,9 @@ public final class RuleAndTokenTestUtils {
         }
     }
 
+    /**
+     * Test all the implementations of {@link CompositeTokenTransformation} that reside under the given package name.
+     */
     public static void testEachTransformationInPackage(String packageName) {
 
         final List<Class<TokenTransformation>> transformationTypes = listTransformationsInPackage(packageName);
