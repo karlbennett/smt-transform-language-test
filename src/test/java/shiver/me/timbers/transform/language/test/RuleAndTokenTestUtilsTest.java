@@ -10,6 +10,8 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static shiver.me.timbers.transform.language.test.PackageConstants.INVALID_PACKAGE_NAME;
+import static shiver.me.timbers.transform.language.test.PackageConstants.VALID_PACKAGE_NAME;
 import static shiver.me.timbers.transform.language.test.RuleAndTokenTestUtils.buildMockApplier;
 import static shiver.me.timbers.transform.language.test.RuleAndTokenTestUtils.getTokenApplierField;
 import static shiver.me.timbers.transform.language.test.RuleAndTokenTestUtils.staticName;
@@ -50,13 +52,13 @@ public class RuleAndTokenTestUtilsTest {
     @Test
     public void testTestEachTransformationInPackageWithValidPackage() {
 
-        testEachTransformationInPackage("shiver.me.timbers.transform.language.test");
+        testEachTransformationInPackage(VALID_PACKAGE_NAME);
     }
 
     @Test(expected = AssertionError.class)
     public void testTestEachTransformationInPackageWithInvalidPackage() {
 
-        testEachTransformationInPackage("in.valid.package");
+        testEachTransformationInPackage(INVALID_PACKAGE_NAME);
     }
 
     @Test

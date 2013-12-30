@@ -3,8 +3,9 @@ package shiver.me.timbers.transform.language.test;
 import org.junit.Test;
 
 public class TransformationsUtilsTest {
+
     @Test
-    public void testBuildWrappingTransformationsFromPackageName() {
+    public void testBuildWrappingTransformationsFromPackageNameWithValidPackageName() {
 
     }
 
