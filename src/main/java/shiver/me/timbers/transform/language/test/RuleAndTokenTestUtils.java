@@ -29,11 +29,16 @@ public final class RuleAndTokenTestUtils {
 
     private static final Field APPLIER_FIELD = getTokenApplierField();
 
-    private static Field getTokenApplierField() {
+    static Field getTokenApplierField() {
+
+        return getTokenApplierField(CompositeTokenTransformation.class);
+    }
+
+    static <T extends CompositeTokenTransformation> Field getTokenApplierField(Class<T> type) {
 
         try {
 
-            final Field applierField = CompositeTokenTransformation.class.getDeclaredField("applier");
+            final Field applierField = type.getDeclaredField("applier");
             applierField.setAccessible(true);
 
             return applierField;
@@ -61,7 +66,17 @@ public final class RuleAndTokenTestUtils {
         testEachTransformation(transformations);
     }
 
-    private static void testEachTransformation(List<TokenTransformation> transformations) {
+    static void testEachTransformation(List<TokenTransformation> transformations) {
+
+        testEachTransformation(APPLIER_FIELD, transformations);
+    }
+
+    static void testEachTransformation(Field applierField, List<TokenTransformation> transformations) {
+
+        if (0 == transformations.size()) {
+
+            throw new AssertionError("no transformations found.");
+        }
 
         for (TokenTransformation transformation : transformations) {
 
@@ -72,7 +87,7 @@ public final class RuleAndTokenTestUtils {
 
             try {
 
-                verify((TokenApplier) APPLIER_FIELD.get(transformation), times(1))
+                verify((TokenApplier) applierField.get(transformation), times(1))
                         .apply(any(RuleContext.class), any(Token.class), eq(APPLIER_STRING));
 
             } catch (IllegalAccessException e) {
@@ -82,7 +97,7 @@ public final class RuleAndTokenTestUtils {
         }
     }
 
-    private static TokenApplier buildMockApplier() {
+    static TokenApplier buildMockApplier() {
 
         final TokenApplier mockApplier = mock(TokenApplier.class);
         when(mockApplier.apply(any(RuleContext.class), any(Token.class), eq(APPLIER_STRING)))
@@ -91,16 +106,24 @@ public final class RuleAndTokenTestUtils {
         return mockApplier;
     }
 
-    private static String staticName(Transformation transformation) {
+    static String staticName(Transformation transformation) {
 
         try {
-            final Field staticName = transformation.getClass().getField("NAME");
+            final Field staticNameField = transformation.getClass().getField("NAME");
 
-            return staticName.get(null).toString();
+            return staticName(staticNameField);
 
         } catch (NoSuchFieldException e) {
 
             throw new RuntimeException(e);
+
+        }
+    }
+
+    static String staticName(Field staticNameField) {
+
+        try {
+            return staticNameField.get(null).toString();
 
         } catch (IllegalAccessException e) {
 
