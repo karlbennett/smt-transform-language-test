@@ -9,6 +9,9 @@ import shiver.me.timbers.transform.antlr4.TokenTransformation;
 import static org.junit.Assert.assertNotNull;
 import static shiver.me.timbers.transform.antlr4.NullTokenTransformation.NULL_TOKEN_TRANSFORMATION;
 
+/**
+ * This class contains methods that can be used to test implementations of the {@link ParserBuilder}.
+ */
 public final class ParserBuilderTestUtils {
 
     private ParserBuilderTestUtils() {
