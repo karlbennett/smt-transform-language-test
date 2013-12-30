@@ -5,6 +5,11 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static shiver.me.timbers.checks.Checks.isNull;
+
+/**
+ * Utility methods for loading tests data files that will be in pre and post transformation states.
+ */
 public class FileUtils {
 
     private FileUtils() {
@@ -26,7 +31,15 @@ public class FileUtils {
 
         try {
 
-            return IOUtils.toString(readTestFile(anchor, fileName));
+            final InputStream stream = readTestFile(anchor, fileName);
+
+            if (isNull(stream)) {
+
+                throw new IllegalStateException("no input stream was able to be created for a file with the name \"" +
+                        fileName + "\" in the package \"" + anchor.getPackage().getName() + "\"");
+            }
+
+            return IOUtils.toString(stream);
 
         } catch (IOException e) {
 
