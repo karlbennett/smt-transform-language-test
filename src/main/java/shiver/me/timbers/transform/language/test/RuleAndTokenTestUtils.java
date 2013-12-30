@@ -20,6 +20,10 @@ import static org.mockito.Mockito.when;
 import static shiver.me.timbers.transform.language.test.TransformationsUtils.buildTransformations;
 import static shiver.me.timbers.transform.language.test.TransformationsUtils.listTransformationsInPackage;
 
+/**
+ * This class contains methods that help with automatically testing all the different
+ * {@link CompositeTokenTransformation} implementations. 
+ */
 public final class RuleAndTokenTestUtils {
 
     private RuleAndTokenTestUtils() {
