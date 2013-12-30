@@ -24,6 +24,12 @@ import static shiver.me.timbers.transform.language.test.ParserBuilderTestUtils.p
 public class ParserBuilderTestUtilsTest {
 
     @Test
+    public void testCreate() {
+
+        new PrivateCreate<ParserBuilderTestUtils>(ParserBuilderTestUtils.class);
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void testBuildParserTestWithValidParser() {
 

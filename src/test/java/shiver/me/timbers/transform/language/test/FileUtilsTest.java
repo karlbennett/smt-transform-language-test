@@ -16,6 +16,13 @@ public class FileUtilsTest {
     private static final String TEST_FILE_NAME = "Test.txt";
     private static final String TEST_TEXT = "Some test text.";
 
+
+    @Test
+    public void testCreate() {
+
+        new PrivateCreate<FileUtils>(FileUtils.class);
+    }
+
     @Test
     public void testReadTestFileWithValidFile() throws IOException {
 
