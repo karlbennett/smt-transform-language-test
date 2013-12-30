@@ -3,11 +3,13 @@ package shiver.me.timbers.transform.language.test;
 import org.reflections.Reflections;
 import shiver.me.timbers.transform.antlr4.CompositeTokenTransformation;
 import shiver.me.timbers.transform.antlr4.TokenApplier;
+import shiver.me.timbers.transform.antlr4.TokenTransformation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -20,66 +22,46 @@ public final class TransformationsUtils {
     private TransformationsUtils() {
     }
 
-    public static List<CompositeTokenTransformation> buildWrappingTransformationsFromPackageName(String packageName) {
+    public static <T extends CompositeTokenTransformation> List<T> buildWrappingTransformationsFromPackageName(
+            String packageName) {
 
-        final List<Class<CompositeTokenTransformation>> tokenTransformationClasses = listTransformationsInPackage(packageName);
+        final List<Class<T>> tokenTransformationClasses = listTransformationsInPackage(packageName);
 
         return buildWrappingTransformations(tokenTransformationClasses);
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Class<CompositeTokenTransformation>> listTransformationsInPackage(String packageName) {
+    public static <T extends CompositeTokenTransformation> List<Class<T>> listTransformationsInPackage(
+            String packageName) {
 
         final Reflections reflections = new Reflections(packageName);
 
         final Set<Class<? extends CompositeTokenTransformation>> allTypeTransformationClasses =
                 reflections.getSubTypesOf(CompositeTokenTransformation.class);
 
-        final List<Class<CompositeTokenTransformation>> typeTransformationsClasses =
-                new ArrayList<Class<CompositeTokenTransformation>>(allTypeTransformationClasses.size());
+        final List<Class<T>> typeTransformationsClasses =
+                new ArrayList<Class<T>>(allTypeTransformationClasses.size());
 
         for (Class type : allTypeTransformationClasses) {
 
-            typeTransformationsClasses.add((Class<CompositeTokenTransformation>) type);
+            typeTransformationsClasses.add((Class<T>) type);
         }
 
         return Collections.unmodifiableList(typeTransformationsClasses);
     }
 
-    public static List<CompositeTokenTransformation> buildWrappingTransformations(
-            List<Class<CompositeTokenTransformation>> classes) {
+    public static <T extends CompositeTokenTransformation> List<T> buildWrappingTransformations(
+            Collection<Class<T>> classes) {
 
-        return buildTransformations(classes, new TokenApplierBuilder<CompositeTokenTransformation>() {
-
-            @Override
-            public TokenApplier build(Class<CompositeTokenTransformation> type) {
-
-                try {
-                    Field field = type.getField("NAME");
-
-                    String name = field.get(null).toString();
-
-                    return new WrappingTokenApplier(name);
-
-                } catch (NoSuchFieldException e) {
-
-                    throw new RuntimeException(e);
-
-                } catch (IllegalAccessException e) {
-
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        return buildTransformations(classes, new NameTokenApplierBuilder<T>());
     }
 
-    public static List<CompositeTokenTransformation> buildTransformations(
-            List<Class<CompositeTokenTransformation>> classes,
-            TokenApplierBuilder<CompositeTokenTransformation> tokenApplierBuilder) {
+    public static <T extends CompositeTokenTransformation> List<T> buildTransformations(Collection<Class<T>> classes,
+                                                                                        TokenApplierBuilder<T> tokenApplierBuilder) {
 
-        List<CompositeTokenTransformation> transformations = new ArrayList<CompositeTokenTransformation>(classes.size());
+        List<T> transformations = new ArrayList<T>(classes.size());
 
-        for (Class<CompositeTokenTransformation> type : classes) {
+        for (Class<T> type : classes) {
 
             transformations.add(buildTransformation(type, tokenApplierBuilder));
         }
@@ -87,19 +69,29 @@ public final class TransformationsUtils {
         return transformations;
     }
 
-    static CompositeTokenTransformation buildTransformation(
-            Class<CompositeTokenTransformation> type,
-            TokenApplierBuilder<CompositeTokenTransformation> tokenApplierBuilder) {
+    @SuppressWarnings("unchecked")
+    static <T extends TokenTransformation> T buildTransformation(Class<T> type,
+                                                                 TokenApplierBuilder<T> tokenApplierBuilder) {
 
         try {
 
-            Constructor<CompositeTokenTransformation> constructor = type.getConstructor(TokenApplier.class);
+            Constructor<T> constructor = type.getConstructor(TokenApplier.class);
 
-            return constructor.newInstance(tokenApplierBuilder.build(type));
+            return buildTransformation(type, constructor, tokenApplierBuilder);
 
         } catch (NoSuchMethodException e) {
 
             throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T extends TokenTransformation> T buildTransformation(Class<T> type, Constructor<T> constructor,
+                                     TokenApplierBuilder<T> tokenApplierBuilder) {
+
+        try {
+
+            return constructor.newInstance(tokenApplierBuilder.build(type));
 
         } catch (InvocationTargetException e) {
 
@@ -113,6 +105,37 @@ public final class TransformationsUtils {
 
             throw new RuntimeException(e);
 
+        }
+    }
+
+    static class NameTokenApplierBuilder<T extends TokenTransformation> implements TokenApplierBuilder<T> {
+
+        @Override
+        public TokenApplier build(Class<T> type) {
+
+            try {
+                Field field = type.getField("NAME");
+
+                return build(field);
+
+            } catch (NoSuchFieldException e) {
+
+                throw new RuntimeException(e);
+            }
+        }
+
+        TokenApplier build(Field field) {
+
+            try {
+
+                String name = field.get(null).toString();
+
+                return new WrappingTokenApplier(name);
+
+            } catch (IllegalAccessException e) {
+
+                throw new RuntimeException(e);
+            }
         }
     }
 }
