@@ -4,7 +4,6 @@ import org.junit.Test;
 import shiver.me.timbers.transform.Transformation;
 import shiver.me.timbers.transform.antlr4.CompositeTokenTransformation;
 import shiver.me.timbers.transform.antlr4.TokenApplier;
-import shiver.me.timbers.transform.antlr4.TokenTransformation;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -70,7 +69,7 @@ public class RuleAndTokenTestUtilsTest {
     public void testTestEachTransformationWithTransformation() {
 
         testEachTransformation(
-                Arrays.<TokenTransformation>asList(new TestTokenTransformation(buildMockApplier())));
+                Arrays.<CompositeTokenTransformation>asList(new TestTokenTransformation(buildMockApplier())));
     }
 
     @Test(expected = RuntimeException.class)
@@ -79,7 +78,7 @@ public class RuleAndTokenTestUtilsTest {
         final Field field = CompositeTokenTransformation.class.getDeclaredField("applier");
 
         testEachTransformation(field,
-                Arrays.<TokenTransformation>asList(new TestTokenTransformation(buildMockApplier())));
+                Arrays.<CompositeTokenTransformation>asList(new TestTokenTransformation(buildMockApplier())));
     }
 
     @Test

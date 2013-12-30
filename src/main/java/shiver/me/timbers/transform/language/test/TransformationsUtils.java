@@ -3,7 +3,6 @@ package shiver.me.timbers.transform.language.test;
 import org.reflections.Reflections;
 import shiver.me.timbers.transform.antlr4.CompositeTokenTransformation;
 import shiver.me.timbers.transform.antlr4.TokenApplier;
-import shiver.me.timbers.transform.antlr4.TokenTransformation;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -13,43 +12,47 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * This class contains methods for easily building multiple instances of
+ */
 public final class TransformationsUtils {
 
     private TransformationsUtils() {
     }
 
-    public static List<TokenTransformation> buildWrappingTransformationsFromPackageName(String packageName) {
+    public static List<CompositeTokenTransformation> buildWrappingTransformationsFromPackageName(String packageName) {
 
-        final List<Class<TokenTransformation>> tokenTransformationClasses = listTransformationsInPackage(packageName);
+        final List<Class<CompositeTokenTransformation>> tokenTransformationClasses = listTransformationsInPackage(packageName);
 
         return buildWrappingTransformations(tokenTransformationClasses);
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Class<TokenTransformation>> listTransformationsInPackage(String packageName) {
+    public static List<Class<CompositeTokenTransformation>> listTransformationsInPackage(String packageName) {
 
         final Reflections reflections = new Reflections(packageName);
 
         final Set<Class<? extends CompositeTokenTransformation>> allTypeTransformationClasses =
                 reflections.getSubTypesOf(CompositeTokenTransformation.class);
 
-        final List<Class<TokenTransformation>> typeTransformationsClasses =
-                new ArrayList<Class<TokenTransformation>>(allTypeTransformationClasses.size());
+        final List<Class<CompositeTokenTransformation>> typeTransformationsClasses =
+                new ArrayList<Class<CompositeTokenTransformation>>(allTypeTransformationClasses.size());
 
         for (Class type : allTypeTransformationClasses) {
 
-            typeTransformationsClasses.add((Class<TokenTransformation>) type);
+            typeTransformationsClasses.add((Class<CompositeTokenTransformation>) type);
         }
 
         return Collections.unmodifiableList(typeTransformationsClasses);
     }
 
-    public static List<TokenTransformation> buildWrappingTransformations(List<Class<TokenTransformation>> classes) {
+    public static List<CompositeTokenTransformation> buildWrappingTransformations(
+            List<Class<CompositeTokenTransformation>> classes) {
 
-        return buildTransformations(classes, new TokenApplierBuilder() {
+        return buildTransformations(classes, new TokenApplierBuilder<CompositeTokenTransformation>() {
 
             @Override
-            public TokenApplier build(Class<TokenTransformation> type) {
+            public TokenApplier build(Class<CompositeTokenTransformation> type) {
 
                 try {
                     Field field = type.getField("NAME");
@@ -70,12 +73,13 @@ public final class TransformationsUtils {
         });
     }
 
-    public static List<TokenTransformation> buildTransformations(List<Class<TokenTransformation>> classes,
-                                                                 TokenApplierBuilder tokenApplierBuilder) {
+    public static List<CompositeTokenTransformation> buildTransformations(
+            List<Class<CompositeTokenTransformation>> classes,
+            TokenApplierBuilder<CompositeTokenTransformation> tokenApplierBuilder) {
 
-        List<TokenTransformation> transformations = new ArrayList<TokenTransformation>(classes.size());
+        List<CompositeTokenTransformation> transformations = new ArrayList<CompositeTokenTransformation>(classes.size());
 
-        for (Class<TokenTransformation> type : classes) {
+        for (Class<CompositeTokenTransformation> type : classes) {
 
             transformations.add(buildTransformation(type, tokenApplierBuilder));
         }
@@ -83,12 +87,13 @@ public final class TransformationsUtils {
         return transformations;
     }
 
-    private static TokenTransformation buildTransformation(Class<TokenTransformation> type,
-                                                           TokenApplierBuilder tokenApplierBuilder) {
+    static CompositeTokenTransformation buildTransformation(
+            Class<CompositeTokenTransformation> type,
+            TokenApplierBuilder<CompositeTokenTransformation> tokenApplierBuilder) {
 
         try {
 
-            Constructor<TokenTransformation> constructor = type.getConstructor(TokenApplier.class);
+            Constructor<CompositeTokenTransformation> constructor = type.getConstructor(TokenApplier.class);
 
             return constructor.newInstance(tokenApplierBuilder.build(type));
 

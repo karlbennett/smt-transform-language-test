@@ -58,13 +58,13 @@ public final class RuleAndTokenTestUtils {
      */
     public static void testEachTransformationInPackage(String packageName) {
 
-        final List<Class<TokenTransformation>> transformationTypes = listTransformationsInPackage(packageName);
+        final List<Class<CompositeTokenTransformation>> transformationTypes = listTransformationsInPackage(packageName);
 
-        final List<TokenTransformation> transformations = buildTransformations(transformationTypes,
-                new TokenApplierBuilder() {
+        final List<CompositeTokenTransformation> transformations = buildTransformations(transformationTypes,
+                new TokenApplierBuilder<CompositeTokenTransformation>() {
 
                     @Override
-                    public TokenApplier build(Class<TokenTransformation> type) {
+                    public TokenApplier build(Class<CompositeTokenTransformation> type) {
 
                         return buildMockApplier();
                     }
@@ -73,12 +73,12 @@ public final class RuleAndTokenTestUtils {
         testEachTransformation(transformations);
     }
 
-    static void testEachTransformation(List<TokenTransformation> transformations) {
+    static void testEachTransformation(List<CompositeTokenTransformation> transformations) {
 
         testEachTransformation(APPLIER_FIELD, transformations);
     }
 
-    static void testEachTransformation(Field applierField, List<TokenTransformation> transformations) {
+    static void testEachTransformation(Field applierField, List<CompositeTokenTransformation> transformations) {
 
         if (0 == transformations.size()) {
 
