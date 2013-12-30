@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static shiver.me.timbers.transform.language.test.ExceptionUtils.assertException;
 
 public class PrivateCreateTest {
 
@@ -28,25 +28,29 @@ public class PrivateCreateTest {
     @Test
     public void testCreateWithNoDefaultConstructor() {
 
-        assertException(NoSuchMethodExceptionTestClass.class, NoSuchMethodException.class);
+        assertException(NoSuchMethodException.class, new PrivateCreateWithClass(NoSuchMethodExceptionTestClass.class)
+        );
     }
 
     @Test
     public void testCreateWithDefaultConstructorThatThrowsAnException() {
 
-        assertException(InvocationTargetExceptionTestClass.class, InvocationTargetException.class);
+        assertException(InvocationTargetException.class, new PrivateCreateWithClass(InvocationTargetExceptionTestClass.class)
+        );
     }
 
     @Test
     public void testCreateWithPrivateConstructor() throws NoSuchMethodException {
 
-        assertException(TestClass.class.getDeclaredConstructor(), IllegalAccessException.class);
+        assertException(IllegalAccessException.class, new PrivateCreateWithConstructor(TestClass.class.getDeclaredConstructor())
+        );
     }
 
     @Test
     public void testCreateWithInterface() {
 
-        assertException(AbstractInstantiationExceptionTestClass.class, InstantiationException.class);
+        assertException(InstantiationException.class, new PrivateCreateWithClass(AbstractInstantiationExceptionTestClass.class)
+        );
     }
 
     @Test(expected = NullPointerException.class)
@@ -63,31 +67,41 @@ public class PrivateCreateTest {
         assertEquals("the test class should be instantiated.", TEST_STRING, testClass.getString());
     }
 
-    @SuppressWarnings("unchecked")
-    private static void assertException(Class objectToInstantiate, Class<? extends Exception> exceptionType) {
+    private static class PrivateCreateWithClass implements Callable<Void> {
 
-        try {
+        private final Class type;
 
-            new PrivateCreate(objectToInstantiate);
+        private PrivateCreateWithClass(Class type) {
 
-        } catch (RuntimeException e) {
+            this.type = type;
+        }
 
-            assertThat("a " + exceptionType.getSimpleName() + " should be thrown", e.getCause(),
-                    instanceOf(exceptionType));
+        @SuppressWarnings("unchecked")
+        @Override
+        public Void call() throws Exception {
+
+            new PrivateCreate(type);
+
+            return null;
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static void assertException(Constructor constructor, Class<? extends Exception> exceptionType) {
+    private static class PrivateCreateWithConstructor implements Callable<Void> {
 
-        try {
+        private final Constructor constructor;
+
+        private PrivateCreateWithConstructor(Constructor constructor) {
+
+            this.constructor = constructor;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Void call() throws Exception {
 
             new PrivateCreate(constructor);
 
-        } catch (RuntimeException e) {
-
-            assertThat("a " + exceptionType.getSimpleName() + " should be thrown", e.getCause(),
-                    instanceOf(exceptionType));
+            return null;
         }
     }
 
