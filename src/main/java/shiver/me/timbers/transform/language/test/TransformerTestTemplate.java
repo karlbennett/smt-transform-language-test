@@ -1,7 +1,5 @@
 package shiver.me.timbers.transform.language.test;
 
-import java.io.IOException;
-
 @SuppressWarnings("UnusedDeclaration")
 public interface TransformerTestTemplate {
 
@@ -27,9 +25,7 @@ public interface TransformerTestTemplate {
 
     public void testTransformWithIrrelevantTransformations();
 
-    public void testTransformWithClosedStream() throws IOException;
+    public void testTransformWithNullInput();
 
     public void testTransformWithNullTransformations();
-
-    public void testTransformWithNullInputStream();
 }

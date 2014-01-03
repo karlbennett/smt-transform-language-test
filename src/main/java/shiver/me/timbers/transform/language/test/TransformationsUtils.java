@@ -57,7 +57,7 @@ public final class TransformationsUtils {
     }
 
     public static <T extends TokenTransformation> List<T> buildTransformations(Collection<Class<T>> classes,
-                                                                                        TokenApplierBuilder<T> tokenApplierBuilder) {
+                                                                               TokenApplierBuilder<T> tokenApplierBuilder) {
 
         List<T> transformations = new ArrayList<T>(classes.size());
 
@@ -87,7 +87,7 @@ public final class TransformationsUtils {
 
     @SuppressWarnings("unchecked")
     static <T extends TokenTransformation> T buildTransformation(Class<T> type, Constructor<T> constructor,
-                                     TokenApplierBuilder<T> tokenApplierBuilder) {
+                                                                 TokenApplierBuilder<T> tokenApplierBuilder) {
 
         try {
 
