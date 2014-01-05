@@ -1,7 +1,7 @@
 package shiver.me.timbers.transform.language.test;
 
 import org.antlr.v4.runtime.Recognizer;
-import shiver.me.timbers.transform.IndividualTransformations;
+import shiver.me.timbers.transform.IterableTransformations;
 import shiver.me.timbers.transform.Transformations;
 import shiver.me.timbers.transform.antlr4.ParserBuilder;
 import shiver.me.timbers.transform.antlr4.TokenTransformation;
@@ -20,7 +20,7 @@ public final class ParserBuilderTestUtils {
     private static final String SOURCE = "";
 
     private static final Transformations<TokenTransformation> TRANSFORMATIONS =
-            new IndividualTransformations<TokenTransformation>(NULL_TOKEN_TRANSFORMATION);
+            new IterableTransformations<TokenTransformation>(NULL_TOKEN_TRANSFORMATION);
 
     public static <P extends Recognizer> void buildParserTest(ParserBuilder<P> parserBuilder) {
 
