@@ -1,7 +1,7 @@
 package shiver.me.timbers.transform.language.test;
 
 import org.antlr.v4.runtime.Recognizer;
-import shiver.me.timbers.transform.IterableTransformations;
+import shiver.me.timbers.transform.iterable.IterableTransformations;
 import shiver.me.timbers.transform.Transformations;
 import shiver.me.timbers.transform.antlr4.ParserBuilder;
 import shiver.me.timbers.transform.antlr4.TokenTransformation;
