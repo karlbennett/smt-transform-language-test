@@ -2,12 +2,11 @@ package shiver.me.timbers.transform.language.test;
 
 import org.antlr.v4.runtime.Recognizer;
 import shiver.me.timbers.transform.Transformations;
+import shiver.me.timbers.transform.antlr4.IterableTokenTransformations;
 import shiver.me.timbers.transform.antlr4.ParserBuilder;
 import shiver.me.timbers.transform.antlr4.TokenTransformation;
-import shiver.me.timbers.transform.iterable.IterableTransformations;
 
 import static org.junit.Assert.assertNotNull;
-import static shiver.me.timbers.transform.antlr4.NullTokenTransformation.NULL_TOKEN_TRANSFORMATION;
 
 /**
  * This class contains methods that can be used to test implementations of the {@link ParserBuilder}.
@@ -19,8 +18,7 @@ public final class ParserBuilderTestUtils {
 
     private static final String SOURCE = "";
 
-    private static final Transformations<TokenTransformation> TRANSFORMATIONS =
-            new IterableTransformations<TokenTransformation>(NULL_TOKEN_TRANSFORMATION);
+    private static final Transformations<TokenTransformation> TRANSFORMATIONS = new IterableTokenTransformations();
 
     public static <P extends Recognizer> void buildParserTest(ParserBuilder<P> parserBuilder) {
 
