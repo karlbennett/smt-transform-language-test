@@ -5,10 +5,6 @@ public interface TransformerTestTemplate {
 
     public void testCreate();
 
-    public void testCreateWithParentTransformations();
-
-    public void testCreateWithNullParentTransformations();
-
     public void testTransform();
 
     public void testTransformKeywordsOnly();

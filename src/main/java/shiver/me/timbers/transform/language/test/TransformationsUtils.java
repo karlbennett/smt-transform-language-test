@@ -6,7 +6,6 @@ import shiver.me.timbers.transform.antlr4.TokenApplier;
 import shiver.me.timbers.transform.antlr4.TokenTransformation;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,9 +24,15 @@ public final class TransformationsUtils {
     public static <T extends TokenTransformation> List<T> buildWrappingTransformationsFromPackageName(
             String packageName) {
 
+        return buildTransformationsFromPackageName(packageName, new NameTokenApplierBuilder<T>());
+    }
+
+    public static <T extends TokenTransformation> List<T> buildTransformationsFromPackageName(
+            String packageName, TokenApplierBuilder<T> tokenApplierBuilder) {
+
         final List<Class<T>> tokenTransformationClasses = listTransformationsInPackage(packageName);
 
-        return buildWrappingTransformations(tokenTransformationClasses);
+        return buildTransformations(tokenTransformationClasses, tokenApplierBuilder);
     }
 
     @SuppressWarnings("unchecked")
@@ -48,12 +53,6 @@ public final class TransformationsUtils {
         }
 
         return Collections.unmodifiableList(typeTransformationsClasses);
-    }
-
-    public static <T extends TokenTransformation> List<T> buildWrappingTransformations(
-            Collection<Class<T>> classes) {
-
-        return buildTransformations(classes, new NameTokenApplierBuilder<T>());
     }
 
     public static <T extends TokenTransformation> List<T> buildTransformations(Collection<Class<T>> classes,
@@ -105,37 +104,6 @@ public final class TransformationsUtils {
 
             throw new RuntimeException(e);
 
-        }
-    }
-
-    static class NameTokenApplierBuilder<T extends TokenTransformation> implements TokenApplierBuilder<T> {
-
-        @Override
-        public TokenApplier build(Class<T> type) {
-
-            try {
-                Field field = type.getField("NAME");
-
-                return build(field);
-
-            } catch (NoSuchFieldException e) {
-
-                throw new RuntimeException(e);
-            }
-        }
-
-        TokenApplier build(Field field) {
-
-            try {
-
-                String name = field.get(null).toString();
-
-                return new WrappingTokenApplier(name);
-
-            } catch (IllegalAccessException e) {
-
-                throw new RuntimeException(e);
-            }
         }
     }
 }
