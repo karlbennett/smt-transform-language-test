@@ -1,6 +1,6 @@
 package shiver.me.timbers.transform.language.test;
 
-import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Parser;
 import shiver.me.timbers.transform.Transformations;
 import shiver.me.timbers.transform.antlr4.IterableTokenTransformations;
 import shiver.me.timbers.transform.antlr4.ParserBuilder;
@@ -20,29 +20,29 @@ public final class ParserBuilderTestUtils {
 
     private static final Transformations<TokenTransformation> TRANSFORMATIONS = new IterableTokenTransformations();
 
-    public static <P extends Recognizer> void buildParserTest(ParserBuilder<P> parserBuilder) {
+    public static <P extends Parser> void buildParserTest(ParserBuilder<P> parserBuilder) {
 
         assertNotNull("a built parser should be produced.", parserBuilder.buildParser(SOURCE, TRANSFORMATIONS));
     }
 
-    public static <P extends Recognizer> void buildParserWithNullSourceStringTest(ParserBuilder<P> parserBuilder) {
+    public static <P extends Parser> void buildParserWithNullSourceStringTest(ParserBuilder<P> parserBuilder) {
 
         parserBuilder.buildParser(null, TRANSFORMATIONS);
     }
 
-    public static <P extends Recognizer> void buildParserWithNullTransformationsTest(ParserBuilder<P> parserBuilder) {
+    public static <P extends Parser> void buildParserWithNullTransformationsTest(ParserBuilder<P> parserBuilder) {
 
         parserBuilder.buildParser(SOURCE, null);
     }
 
-    public static <P extends Recognizer> void parseTest(ParserBuilder<P> parserBuilder) {
+    public static <P extends Parser> void parseTest(ParserBuilder<P> parserBuilder) {
 
         final P parser = parserBuilder.buildParser(SOURCE, TRANSFORMATIONS);
 
         assertNotNull("parse should produce a parse tree.", parserBuilder.parse(parser));
     }
 
-    public static <P extends Recognizer> void parseWithNullParserTest(ParserBuilder<P> parserBuilder) {
+    public static <P extends Parser> void parseWithNullParserTest(ParserBuilder<P> parserBuilder) {
 
         parserBuilder.parse(null);
     }

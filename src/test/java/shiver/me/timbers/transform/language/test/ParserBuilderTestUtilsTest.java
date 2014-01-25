@@ -1,6 +1,6 @@
 package shiver.me.timbers.transform.language.test;
 
-import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Test;
 import shiver.me.timbers.transform.Transformations;
@@ -33,10 +33,10 @@ public class ParserBuilderTestUtilsTest {
     @SuppressWarnings("unchecked")
     public void testBuildParserTestWithValidParser() {
 
-        final Recognizer recognizer = mock(Recognizer.class);
+        final Parser parser = mock(Parser.class);
 
         final ParserBuilder parserBuilder = mock(ParserBuilder.class);
-        when(parserBuilder.buildParser(anyString(), any(Transformations.class))).thenReturn(recognizer);
+        when(parserBuilder.buildParser(anyString(), any(Transformations.class))).thenReturn(parser);
 
         buildParserTest(parserBuilder);
 
@@ -101,17 +101,17 @@ public class ParserBuilderTestUtilsTest {
     @SuppressWarnings("unchecked")
     public void testParseTestWithValidParser() {
 
-        final Recognizer recognizer = mock(Recognizer.class);
+        final Parser parser = mock(Parser.class);
         final ParseTree parseTree = mock(ParseTree.class);
 
-        final ParserBuilder<Recognizer> parserBuilder = mock(ParserBuilder.class);
-        when(parserBuilder.buildParser(anyString(), any(Transformations.class))).thenReturn(recognizer);
-        when(parserBuilder.parse(recognizer)).thenReturn(parseTree);
+        final ParserBuilder<Parser> parserBuilder = mock(ParserBuilder.class);
+        when(parserBuilder.buildParser(anyString(), any(Transformations.class))).thenReturn(parser);
+        when(parserBuilder.parse(parser)).thenReturn(parseTree);
 
         parseTest(parserBuilder);
 
         verify(parserBuilder, times(1)).buildParser(notNull(String.class), notNull(Transformations.class));
-        verify(parserBuilder, times(1)).parse(recognizer);
+        verify(parserBuilder, times(1)).parse(parser);
 
         verifyNoMoreInteractions(parserBuilder);
     }
@@ -134,11 +134,11 @@ public class ParserBuilderTestUtilsTest {
     @SuppressWarnings("unchecked")
     public void testParseWithNullParserTestWithParser() {
 
-        final ParserBuilder<Recognizer> parserBuilder = mock(ParserBuilder.class);
+        final ParserBuilder<Parser> parserBuilder = mock(ParserBuilder.class);
 
         parseWithNullParserTest(parserBuilder);
 
-        verify(parserBuilder, times(1)).parse(isNull(Recognizer.class));
+        verify(parserBuilder, times(1)).parse(isNull(Parser.class));
 
         verifyNoMoreInteractions(parserBuilder);
     }
